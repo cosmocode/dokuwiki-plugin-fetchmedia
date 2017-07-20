@@ -10,21 +10,6 @@
 if(!defined('DOKU_INC')) die();
 
 class admin_plugin_fetchmedia extends DokuWiki_Admin_Plugin {
-
-    /**
-     * @return int sort number in admin menu
-     */
-    public function getMenuSort() {
-        return FIXME;
-    }
-
-    /**
-     * @return bool true if only access for superuser, false is for superusers and moderators
-     */
-    public function forAdminOnly() {
-        return false;
-    }
-
     /**
      * Should carry out any processing required by the plugin.
      */
