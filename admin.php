@@ -20,7 +20,18 @@ class admin_plugin_fetchmedia extends DokuWiki_Admin_Plugin {
      * Render HTML output, e.g. helpful text and a form
      */
     public function html() {
-        ptln('<h1>'.$this->getLang('menu').'</h1>');
+        $doc = '<h1>'.$this->getLang('menu').'</h1>';
+
+        $form = new \dokuwiki\Form\Form(['id' => 'fetchmedia_form']);
+        $form->addTextInput('namespace', 'Namespace to download');
+        $form->addRadioButton('mediatypes', 'All types of Media')->val('all');
+        $form->addRadioButton('mediatypes', 'Only Windows-File-Shares')->val('windows-shares');
+        $form->addRadioButton('mediatypes', 'Only common media files')->val('common');
+        $form->addButton('submit', 'Download');
+
+        $doc .= $form->toHTML();
+        $doc .= '<div id="fetchmedia_results"></div>';
+        echo $doc;
     }
 }
 
