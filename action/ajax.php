@@ -30,8 +30,8 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
      *                           handler was registered]
      */
     public function handle_ajax(Doku_Event $event, $param) {
-        dbglog('foo', __FILE__ . ': ' . __LINE__);
-        if ($event->data != 'plugin_fetchmedia') {
+        $call = 'plugin_fetchmedia';
+        if (0 !== strpos($event->data, $call)) {
             return;
         }
 
@@ -42,7 +42,7 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
         $event->stopPropagation();
 
         global $INPUT, $conf;
-        $action = $INPUT->str('action');
+        $action = substr($event->data, strlen($call)+1);
 
         header('Content-Type: application/json');
         try {
@@ -67,9 +67,71 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
                 $namespace = $INPUT->str('namespace');
                 $type = $INPUT->str('type');
                 return $this->findExternalMediaFiles($namespace, $type);
+            case 'downloadExternalFile':
+                $page = $INPUT->str('page');
+                $link = $INPUT->str('link');
+                return $this->downloadExternalFile($page, $link);
+                break;
             default:
                 throw new Exception('FIXME invalid action');
         }
+    }
+
+    public function downloadExternalFile($page, $link) {
+        // check that link is on page
+
+        $fn = $this->constructFileName($link);
+        $id = getNS(cleanID($page)) . ':' . $fn;
+
+        // download file
+        $res = fopen($link, 'rb');
+        if (!($tmp = io_mktmpdir())) return false;
+        $path = $tmp.'/'.md5($id);
+        $target = fopen($path, 'wb');
+        $realSize = stream_copy_to_stream($res, $target);
+        fclose($target);
+        fclose($res);
+
+        // check if download was successful
+        dbglog($realSize === false ? 'failure' : 'success', __FILE__ . ': ' . __LINE__);
+
+        list($ext,$mime) = mimetype($id);
+        $file = [
+            'name' => $path,
+            'mime' => $mime,
+            'ext' => $ext,
+        ];
+        $mediaID = media_save($file, $id, true, auth_quickaclcheck($id), 'rename');
+        dbglog($mediaID, __FILE__ . ': ' . __LINE__);
+        if (!is_string($mediaID)) {
+            return;
+        }
+
+        // report status?
+
+        // replace link
+        $text = rawWiki($page);
+        $newText = str_replace($link, $mediaID, $text);
+
+        // create new page revision
+        if ($text !== $newText) {
+            saveWikiText($page, $newText, 'File ' . hsc($link) . ' downloaded by fetchmedia plugin');
+        }
+
+
+        // report ok
+    }
+
+    /**
+     * @param $link
+     *
+     * @return string
+     */
+    public function constructFileName($link) {
+        $urlFNstart = strrpos($link, '/') + 1;
+        $windosFNstart = strrpos($link, '\\') + 1;
+        $fnStart = max($urlFNstart, $windosFNstart);
+        return substr($link, $fnStart);
     }
 
     public function findExternalMediaFiles($namespace, $type) {
