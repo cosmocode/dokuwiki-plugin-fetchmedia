@@ -34,9 +34,19 @@ jQuery(() => {
                 credentials: 'include',
             },
         )
-            .then(function (res) {
+            .then((res) => {
                 console.log('success');
                 console.log(res);
+                const selector = `li[data-id="${btoa(page + link)}"]`;
+                console.log(selector);
+                const li = document.querySelector(selector);
+                const STATUS_OK = 200;
+                if (res.status === STATUS_OK) {
+                    li.textContent += ' OK';
+                } else {
+                    li.textContent += ' ' + res.status + ': ' + res.statusText;
+                }
+
                 requestDownloadExternalFile(linkGen);
             })
             .catch(function (res) {
@@ -56,13 +66,14 @@ jQuery(() => {
                 sectok: $form.find('input[name="sectok"]').val(),
             };
             jQuery.get(DOKU_BASE + 'lib/exe/ajax.php', options).done(function displayPagesToDownload(data) {
-                const tableHead = '<table class="inline"><thead><tr><th>page</th><th>Links🔗</th></tr></thead>';
+                const tableHead = '<table class="inline"><thead><tr><th>Page 📄</th><th>Links 🔗</th></tr></thead>';
                 const tableRows = Object.entries(data).map(([page, mediaLinks]) =>
                     `<tr>
                         <td><span class="wikipage">${page}</span></td>
-                        <td><ul>${mediaLinks.map(url => `<li>${url}</li>`).join('')}</ul></td>
-                    </tr>`,
+                        <td><ul>${mediaLinks.map(url => `<li data-id="${btoa(page + url)}">${url}</li>`).join('')}</ul></td>
+                    </tr>`
                 );
+                // todo handle case that there are no external links
                 const table = tableHead + tableRows.join('') + '</table>';
                 jQuery('#fetchmedia_results').html(table);
 
