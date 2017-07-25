@@ -57,6 +57,10 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
             http_status(500);
         }
 
+        if (is_array($result) && isset($result['status'])) {
+            http_status($result['status'], $result['status_text']);
+            $result = isset($result['body']) ? $result['body'] : '';
+        }
         echo json_encode($result);
     }
 
@@ -71,7 +75,6 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
                 $page = $INPUT->str('page');
                 $link = $INPUT->str('link');
                 return $this->downloadExternalFile($page, $link);
-                break;
             default:
                 throw new Exception('FIXME invalid action');
         }
@@ -83,9 +86,27 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
         $fn = $this->constructFileName($link);
         $id = getNS(cleanID($page)) . ':' . $fn;
 
+        // check if file exists
+        if (filter_var($link, FILTER_VALIDATE_URL)) {
+            // check headers
+            $headers = get_headers($link, true);
+            list($protocoll, $code, $textstatus) = explode(' ', $headers[0]);
+            if ($code >= 400) {
+                return ['status' => $code, 'status_text' => $textstatus];
+            }
+        } else if (!file_exists($link)) {
+            // windows share
+            return ['status' => 404, 'status_text' => 'Windows share doesn\'t exist'];
+        }
+
         // download file
         $res = fopen($link, 'rb');
-        if (!($tmp = io_mktmpdir())) return false;
+        if ($res === false) {
+            return ['status' => 500, 'status_text' => 'Failed to open stream'];
+        }
+        if (!($tmp = io_mktmpdir())) {
+            throw new Exception('Failed to create tempdir');
+        };
         $path = $tmp.'/'.md5($id);
         $target = fopen($path, 'wb');
         $realSize = stream_copy_to_stream($res, $target);
@@ -93,7 +114,9 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
         fclose($res);
 
         // check if download was successful
-        dbglog($realSize === false ? 'failure' : 'success', __FILE__ . ': ' . __LINE__);
+        if ($realSize === false) {
+            return ['status' => 500, 'status_text' => 'Failed to download file'];
+        }
 
         list($ext,$mime) = mimetype($id);
         $file = [
@@ -104,34 +127,63 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
         $mediaID = media_save($file, $id, true, auth_quickaclcheck($id), 'rename');
         dbglog($mediaID, __FILE__ . ': ' . __LINE__);
         if (!is_string($mediaID)) {
-            return;
+            list($textstatus, $code) = $mediaID;
+            return ['status' => 400, 'status_text' => $textstatus];
         }
 
         // report status?
 
         // replace link
         $text = rawWiki($page);
-        $newText = str_replace($link, $mediaID, $text);
+        $newText = $this->replaceLinkInText($text, $link, $mediaID);
 
         // create new page revision
         if ($text !== $newText) {
             saveWikiText($page, $newText, 'File ' . hsc($link) . ' downloaded by fetchmedia plugin');
         }
 
-
         // report ok
+        return $mediaID;
     }
 
     /**
-     * @param $link
+     * @param string $text
+     * @param string $oldlink
+     * @param string $newMediaId
      *
-     * @return string
+     * @return string the adjusted text
      */
-    public function constructFileName($link) {
-        $urlFNstart = strrpos($link, '/') + 1;
-        $windosFNstart = strrpos($link, '\\') + 1;
-        $fnStart = max($urlFNstart, $windosFNstart);
-        return substr($link, $fnStart);
+    public function replaceLinkInText($text, $oldlink, $newMediaId) {
+        if (filter_var($oldlink, FILTER_VALIDATE_URL)) {
+            $type = ['externalmedia'];
+        } else {
+            $type = ['windowssharelink'];
+        }
+        $done = false;
+        while (!$done) {
+            $done = true;
+            $ins = p_get_instructions($text);
+            $mediaLinkInstructions = $this->searchInstructions($ins, $type);
+            foreach ($mediaLinkInstructions as $mediaLinkInstruction) {
+                if ($mediaLinkInstruction[1][0] !== $oldlink) {
+                    continue;
+                }
+                $done = false;
+                $start = $mediaLinkInstruction[2] + 1;
+                $end = $mediaLinkInstruction[2] + 1 + strlen($oldlink);
+                $prefix = substr($text, 0, $start);
+                $postfix = substr($text, $end);
+                if (substr($prefix, -2) === '[[') {
+                    $prefix = substr($prefix, 0, -2) . '{{';
+                    $closingBracketsPos = strpos($postfix, ']]');
+                    $postfix = substr($postfix, 0, $closingBracketsPos) . '}}' . substr($postfix,  $closingBracketsPos + 2);
+                }
+                $text = $prefix . $newMediaId . $postfix;
+                break;
+            }
+        }
+
+        return $text;
     }
 
     public function findExternalMediaFiles($namespace, $type) {
@@ -163,7 +215,7 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
                 }
             }
         }
-        $mediaLinks = array_filter($mediaLinks);
+        $mediaLinks = array_unique(array_filter($mediaLinks));
         return $mediaLinks;
     }
 
@@ -184,5 +236,17 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
             }
         }
         return $results;
+    }
+
+    /**
+     * @param $link
+     *
+     * @return string
+     */
+    public function constructFileName($link) {
+        $urlFNstart = strrpos($link, '/') + 1;
+        $windosFNstart = strrpos($link, '\\') + 1;
+        $fnStart = max($urlFNstart, $windosFNstart);
+        return substr($link, $fnStart);
     }
 }
