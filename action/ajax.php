@@ -90,8 +90,8 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
         if (filter_var($link, FILTER_VALIDATE_URL)) {
             // check headers
             $headers = get_headers($link, true);
-            list($protocoll, $code, $textstatus) = explode(' ', $headers[0]);
-            if ($code >= 400) {
+            list($protocoll, $code, $textstatus) = explode(' ', $headers[0], 3);
+            if ($code >= 300) {
                 return ['status' => $code, 'status_text' => $textstatus];
             }
         } else if (!file_exists($link)) {
@@ -125,7 +125,6 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
             'ext' => $ext,
         ];
         $mediaID = media_save($file, $id, true, auth_quickaclcheck($id), 'rename');
-        dbglog($mediaID, __FILE__ . ': ' . __LINE__);
         if (!is_string($mediaID)) {
             list($textstatus, $code) = $mediaID;
             return ['status' => 400, 'status_text' => $textstatus];
@@ -169,6 +168,9 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
                     continue;
                 }
                 $done = false;
+
+                // FIXME: handle spaces for positioning! m(
+
                 $start = $mediaLinkInstruction[2] + 1;
                 $end = $mediaLinkInstruction[2] + 1 + strlen($oldlink);
                 $prefix = substr($text, 0, $start);
@@ -190,6 +192,7 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
         $pageresults = [];
         $basedir = dirname(wikiFN(cleanID($namespace) . ':start'));
         search($pageresults, $basedir, 'search_allpages', []);
+
         $mediaLinks = [];
         $instructionNames = [];
         if ('all' == $type || 'windows-shares' == $type) {
@@ -214,8 +217,11 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
                     $mediaLinks[$pagename][] = $mediaLinkInstruction[1][0];
                 }
             }
+            $mediaLinks[$pagename] = array_unique($mediaLinks[$pagename]);
         }
-        $mediaLinks = array_unique(array_filter($mediaLinks));
+
+        $mediaLinks = array_filter($mediaLinks);
+
         return $mediaLinks;
     }
 
