@@ -44,8 +44,7 @@ function requestDownloadExternalFile(linkGen) {
             requestDownloadExternalFile(linkGen);
         })
         .catch((res) => {
-            console.log('failure');
-            console.log(res);
+            console.error(res);
             requestDownloadExternalFile(linkGen);
         });
 }
