@@ -89,9 +89,14 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
         // check if file exists
         if (filter_var($link, FILTER_VALIDATE_URL)) {
             // check headers
-            $headers = get_headers($link, true);
-            list($protocoll, $code, $textstatus) = explode(' ', $headers[0], 3);
-            if ($code >= 300) {
+            $headers = get_headers($link);
+            $statusHeaders = array_filter($headers, function ($elem) {
+                return strpos($elem, ':') === false;
+            });
+            $finalStatus = end($statusHeaders);
+            dbglog($finalStatus, __FILE__ . ': ' . __LINE__);
+            list($protocoll, $code, $textstatus) = explode(' ', $finalStatus, 3);
+            if ($code >= 400) {
                 return ['status' => $code, 'status_text' => $textstatus];
             }
         } else if (!file_exists($link)) {
