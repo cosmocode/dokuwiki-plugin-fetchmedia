@@ -8,6 +8,18 @@ function* flattenLinks(data) {
     }, []);
 }
 
+function decorateLiWithResult(page, link, res) {
+    const selector = `li[data-id="${btoa(page + link)}"]`;
+    const li = document.querySelector(selector);
+    const STATUS_OK = 200;
+
+    if (res.status === STATUS_OK) {
+        li.textContent += ' OK';
+    } else {
+        li.textContent += ` ${res.status}: ${res.statusText} ❌`;
+    }
+}
+
 function requestDownloadExternalFile(linkGen) {
     const { value, done } = linkGen.next();
     if (done) {
@@ -28,15 +40,7 @@ function requestDownloadExternalFile(linkGen) {
 
     fetch(`${DOKU_BASE}lib/exe/ajax.php`, options)
         .then((res) => {
-            const selector = `li[data-id="${btoa(page + link)}"]`;
-            const li = document.querySelector(selector);
-            const STATUS_OK = 200;
-            if (res.status === STATUS_OK) {
-                li.textContent += ' OK';
-            } else {
-                li.textContent += ` ${res.status}: ${res.statusText}`;
-            }
-
+            decorateLiWithResult(page, link, res);
             requestDownloadExternalFile(linkGen);
         })
         .catch((res) => {
