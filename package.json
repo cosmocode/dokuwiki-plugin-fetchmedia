@@ -1,0 +1,26 @@
+{
+    "name": "fetchmedia",
+    "version": "1.0.0",
+    "description": "Download linked external media to wiki namespaces",
+    "repository": "git@github.com:cosmocode/dokuwiki-plugin-fetchmedia.git",
+    "author": "Michael Große <grosse@cosmocode.de>",
+    "license": "GPL-2.0",
+    "devDependencies": {
+        "babel-core": "^6.25.0",
+        "babel-loader": "^7.1.1",
+        "babel-polyfill": "^6.23.0",
+        "babel-preset-env": "^1.6.0",
+        "eslint": "^4.3.0",
+        "eslint-config-airbnb-base": "^11.3.1",
+        "eslint-loader": "^1.9.0",
+        "eslint-plugin-import": "^2.7.0",
+        "webpack": "^3.4.1",
+        "whatwg-fetch": "^2.0.3"
+    },
+    "scripts": {
+        "dev": "webpack -d",
+        "watch": "webpack -dw",
+        "build": "webpack -p",
+        "eslint": "NODE_ENV=production eslint script/main.js"
+    }
+}
