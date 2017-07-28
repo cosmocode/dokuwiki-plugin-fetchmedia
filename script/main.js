@@ -9,7 +9,7 @@ function* flattenLinks(data) {
 }
 
 function decorateLiWithResult(page, link, res) {
-    const selector = `li[data-id="${btoa(page + link)}"]`;
+    const selector = `li[data-id="${btoa(page + link)}"] div.li`;
     const li = document.querySelector(selector);
     const STATUS_OK = 200;
 
@@ -67,11 +67,18 @@ form.addEventListener('submit',
         fetch(`${DOKU_BASE}lib/exe/ajax.php?${query}`, options)
             .then(response => response.json())
             .then((data) => {
-                const tableHead = '<table class="inline"><thead><tr><th>Page 📄</th><th>Links 🔗</th></tr></thead>';
+                if (!data.length) {
+                    const noLinksMsg = window.LANG.plugins.fetchmedia['error: no links found'];
+                    document.getElementById('fetchmedia_results').innerHTML = `<div id="noLinksFound"><p><em>${noLinksMsg}</em></p></div>`;
+                    return;
+                }
+                const l10nTableHeadingPage = window.LANG.plugins.fetchmedia['table-heading: page'];
+                const l10nTableHeadingLinks = window.LANG.plugins.fetchmedia['table-heading: links'];
+                const tableHead = `<table class="inline"><thead><tr><th>${l10nTableHeadingPage}</th><th>${l10nTableHeadingLinks}</th></tr></thead>`;
                 const tableRows = Object.entries(data).map(([page, mediaLinks]) =>
                     `<tr>
                         <td><span class="wikipage">${page}</span></td>
-                        <td><ul>${mediaLinks.map(url => `<li data-id="${btoa(page + url)}">${url}</li>`).join('')}</ul></td>
+                        <td><ul>${mediaLinks.map(url => `<li data-id="${btoa(page + url)}"><div class="li">${url}</div></li>`).join('')}</ul></td>
                     </tr>`,
                 );
                 // todo handle case that there are no external links

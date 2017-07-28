@@ -22,15 +22,32 @@ class admin_plugin_fetchmedia extends DokuWiki_Admin_Plugin {
     public function html() {
         $doc = '<h1>'.$this->getLang('menu').'</h1>';
 
-        $form = new \dokuwiki\Form\Form(['id' => 'fetchmedia_form']);
-        $form->addTextInput('namespace', 'Namespace to download');
-        $form->addRadioButton('mediatypes', 'All types of Media')->val('all');
-        $form->addRadioButton('mediatypes', 'Only Windows-File-Shares')->val('windows-shares');
-        $form->addRadioButton('mediatypes', 'Only common media files')->val('common');
-        $form->addButton('submit', 'Download');
+        $doc .= $this->locale_xhtml('intro');
 
+        $form = new \dokuwiki\Form\Form(['id' => 'fetchmedia_form']);
+        $form->addFieldsetOpen();
+        $form->addTextInput('namespace', $this->getLang('label: namespace input'))->attrs([
+            'inputmode' => 'verbatim',
+            'pattern' => '[a-z0-9_:/;\.]+',
+            'placeholder' => 'name:space',
+            'title' => $this->getLang('title: namespace input hint'),
+            'required' => 'required',
+            'autofocus' => 'autofocus,'
+        ]);
+        $form->addHTML('<br />');
+        $form->addRadioButton('mediatypes', $this->getLang('label: all media'))->val('all')->attr('required', 'required');
+        $form->addRadioButton('mediatypes', $this->getLang('label: windows shares'))->val('windows-shares')->attrs([
+            'required' => 'required',
+            'checked' => 'checked',
+        ]);
+        $form->addRadioButton('mediatypes', $this->getLang('label: common media only'))->val('common')->attr('required', 'required');
+        $form->addButton('submit', $this->getLang('label: button download'));
+        $form->addFieldsetClose();
+
+        $doc .= '<div id="plugin_fetchmedia_page">';
         $doc .= $form->toHTML();
         $doc .= '<div id="fetchmedia_results"></div>';
+        $doc .= '</div>';
         echo $doc;
     }
 }
