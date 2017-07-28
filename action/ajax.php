@@ -101,13 +101,13 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
             }
         } else if (!file_exists($link)) {
             // windows share
-            return ['status' => 404, 'status_text' => 'Windows share doesn\'t exist'];
+            return ['status' => 404, 'status_text' => $this->getLang('error: windows share missing')];
         }
 
         // download file
         $res = fopen($link, 'rb');
         if ($res === false) {
-            return ['status' => 500, 'status_text' => 'Failed to open stream'];
+            return ['status' => 500, 'status_text' => $this->getLang('error: failed to open stream')];
         }
         if (!($tmp = io_mktmpdir())) {
             throw new Exception('Failed to create tempdir');
@@ -120,7 +120,7 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
 
         // check if download was successful
         if ($realSize === false) {
-            return ['status' => 500, 'status_text' => 'Failed to download file'];
+            return ['status' => 500, 'status_text' => $this->getLang('error: failed to download file')];
         }
 
         list($ext,$mime) = mimetype($id);
