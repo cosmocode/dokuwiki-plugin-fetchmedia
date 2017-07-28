@@ -23,6 +23,7 @@ $lang['error: failed to download file'] = 'Failed to download file';
 
 $lang['js']['table-heading: page'] = 'Page 📄';
 $lang['js']['table-heading: links'] = 'Links 🔗';
+$lang['js']['error: no links found'] = 'No links found in the given namespace.';
 
 
 //Setup VIM: ex: et ts=4 :
