@@ -76,12 +76,14 @@ form.addEventListener('submit',
                 const l10nTableHeadingPage = window.LANG.plugins.fetchmedia['table-heading: page'];
                 const l10nTableHeadingLinks = window.LANG.plugins.fetchmedia['table-heading: links'];
                 const tableHead = `<table class="inline"><thead><tr><th>${l10nTableHeadingPage}</th><th>${l10nTableHeadingLinks}</th></tr></thead>`;
-                const tableRows = links.map(([page, mediaLinks]) =>
-                    `<tr>
-                        <td><span class="wikipage">${page}</span></td>
+                const tableRows = links.map(([page, mediaLinks]) => {
+                    const pageUrl = `${DOKU_BASE}doku.php?id=${page}`;
+                    const pageLink = `<a href="${pageUrl}" class="wikilink1">${page}</a>`;
+                    return `<tr>
+                        <td><span class="wikipage">${pageLink}</span></td>
                         <td><ul>${mediaLinks.map(url => `<li data-id="${btoa(page + url)}"><div class="li">${url}</div></li>`).join('')}</ul></td>
-                    </tr>`,
-                );
+                    </tr>`;
+                });
                 // todo handle case that there are no external links
                 const table = `${tableHead + tableRows.join('')}</table>`;
                 document.getElementById('fetchmedia_results').innerHTML = table;
