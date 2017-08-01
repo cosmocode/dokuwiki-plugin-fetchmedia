@@ -14,9 +14,9 @@ function decorateLiWithResult(page, link, res) {
     const STATUS_OK = 200;
 
     if (res.status === STATUS_OK) {
-        li.textContent += ' OK';
+        li.innerHTML += '<span class="result success"> OK ✔️</span>';
     } else {
-        li.textContent += ` ${res.status}: ${res.statusText} ❌`;
+        li.innerHTML += `<span class="result error"> ${res.status}: ${res.statusText} ❌</span>`;
     }
 }
 
@@ -81,7 +81,7 @@ form.addEventListener('submit',
                     const pageLink = `<a href="${pageUrl}" class="wikilink1">${page}</a>`;
                     return `<tr>
                         <td><span class="wikipage">${pageLink}</span></td>
-                        <td><ul>${mediaLinks.map(url => `<li data-id="${btoa(page + url)}"><div class="li">${url}</div></li>`).join('')}</ul></td>
+                        <td><ul>${mediaLinks.map(url => `<li data-id="${btoa(page + url)}"><div class="li"><span class="mediaLink">${url}</span></div></li>`).join('')}</ul></td>
                     </tr>`;
                 });
                 // todo handle case that there are no external links

@@ -21,6 +21,17 @@
         > table {
             margin-left: auto;
             margin-right: auto;
+
+            span.result {
+                &.success {
+                    color: green;
+                }
+
+                &.error {
+                    color: darkred;
+                    font-weight: bold;
+                }
+            }
         }
 
         div#noLinksFound {
