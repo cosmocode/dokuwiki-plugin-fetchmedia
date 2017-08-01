@@ -14,9 +14,9 @@ function decorateLiWithResult(page, link, res) {
     const STATUS_OK = 200;
 
     if (res.status === STATUS_OK) {
-        li.textContent += ' OK';
+        li.innerHTML += '<span class="result success"> OK ✔️</span>';
     } else {
-        li.textContent += ` ${res.status}: ${res.statusText} ❌`;
+        li.innerHTML += `<span class="result error"> ${res.status}: ${res.statusText} ❌</span>`;
     }
 }
 
@@ -67,7 +67,8 @@ form.addEventListener('submit',
         fetch(`${DOKU_BASE}lib/exe/ajax.php?${query}`, options)
             .then(response => response.json())
             .then((data) => {
-                if (!data.length) {
+                const links = Object.entries(data);
+                if (!links.length) {
                     const noLinksMsg = window.LANG.plugins.fetchmedia['error: no links found'];
                     document.getElementById('fetchmedia_results').innerHTML = `<div id="noLinksFound"><p><em>${noLinksMsg}</em></p></div>`;
                     return;
@@ -75,12 +76,14 @@ form.addEventListener('submit',
                 const l10nTableHeadingPage = window.LANG.plugins.fetchmedia['table-heading: page'];
                 const l10nTableHeadingLinks = window.LANG.plugins.fetchmedia['table-heading: links'];
                 const tableHead = `<table class="inline"><thead><tr><th>${l10nTableHeadingPage}</th><th>${l10nTableHeadingLinks}</th></tr></thead>`;
-                const tableRows = Object.entries(data).map(([page, mediaLinks]) =>
-                    `<tr>
-                        <td><span class="wikipage">${page}</span></td>
-                        <td><ul>${mediaLinks.map(url => `<li data-id="${btoa(page + url)}"><div class="li">${url}</div></li>`).join('')}</ul></td>
-                    </tr>`,
-                );
+                const tableRows = links.map(([page, mediaLinks]) => {
+                    const pageUrl = `${DOKU_BASE}doku.php?id=${page}`;
+                    const pageLink = `<a href="${pageUrl}" class="wikilink1">${page}</a>`;
+                    return `<tr>
+                        <td><span class="wikipage">${pageLink}</span></td>
+                        <td><ul>${mediaLinks.map(url => `<li data-id="${btoa(page + url)}"><div class="li"><span class="mediaLink">${url}</span></div></li>`).join('')}</ul></td>
+                    </tr>`;
+                });
                 // todo handle case that there are no external links
                 const table = `${tableHead + tableRows.join('')}</table>`;
                 document.getElementById('fetchmedia_results').innerHTML = table;
