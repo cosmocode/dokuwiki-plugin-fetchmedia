@@ -67,7 +67,8 @@ form.addEventListener('submit',
         fetch(`${DOKU_BASE}lib/exe/ajax.php?${query}`, options)
             .then(response => response.json())
             .then((data) => {
-                if (!data.length) {
+                const links = Object.entries(data);
+                if (!links.length) {
                     const noLinksMsg = window.LANG.plugins.fetchmedia['error: no links found'];
                     document.getElementById('fetchmedia_results').innerHTML = `<div id="noLinksFound"><p><em>${noLinksMsg}</em></p></div>`;
                     return;
@@ -75,7 +76,7 @@ form.addEventListener('submit',
                 const l10nTableHeadingPage = window.LANG.plugins.fetchmedia['table-heading: page'];
                 const l10nTableHeadingLinks = window.LANG.plugins.fetchmedia['table-heading: links'];
                 const tableHead = `<table class="inline"><thead><tr><th>${l10nTableHeadingPage}</th><th>${l10nTableHeadingLinks}</th></tr></thead>`;
-                const tableRows = Object.entries(data).map(([page, mediaLinks]) =>
+                const tableRows = links.map(([page, mediaLinks]) =>
                     `<tr>
                         <td><span class="wikipage">${page}</span></td>
                         <td><ul>${mediaLinks.map(url => `<li data-id="${btoa(page + url)}"><div class="li">${url}</div></li>`).join('')}</ul></td>
