@@ -21,6 +21,7 @@ $lang['error: windows share missing'] = 'Windows-File-Share existiert nicht';
 $lang['error: failed to open stream'] = 'Konnte Stream zum Dateidownload nicht öffen';
 $lang['error: failed to download file'] = 'Herunterladen der Datei ist fehlgeschlagen';
 $lang['error: page is locked'] = 'Seite ist gesperrt von %s';
+$lang['error: windows share is directory'] = 'Es wurde ein Ordner statt einer Datei verlinkt.';
 
 $lang['js']['table-heading: page'] = 'Seite 📄';
 $lang['js']['table-heading: links'] = 'Links 🔗';

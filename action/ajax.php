@@ -114,9 +114,15 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
             if ($code >= 400) {
                 return ['status' => $code, 'status_text' => $textstatus];
             }
-        } else if (!file_exists($link)) {
+        } else {
             // windows share
-            return ['status' => 404, 'status_text' => $this->getLang('error: windows share missing')];
+            if (!file_exists($link)) {
+                return ['status' => 404, 'status_text' => $this->getLang('error: windows share missing')];
+            }
+
+            if (is_dir($link)) {
+                return ['status' => 422, 'status_text' => $this->getLang('error: windows share is directory')];
+            }
         }
 
         // download file
