@@ -10,7 +10,7 @@ $lang['menu'] = 'Fetch external media-files';
 
 
 $lang['label: namespace input'] = 'Namespace to download';
-$lang['label: all media'] = 'All types of Media';
+$lang['label: all media'] = 'Both types of media';
 $lang['label: windows shares'] = 'Only Windows-File-Shares';
 $lang['label: common media only'] = 'Only common media files';
 $lang['label: button download'] = 'Download Now';
