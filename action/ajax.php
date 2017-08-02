@@ -129,10 +129,10 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
             'mime' => $mime,
             'ext' => $ext,
         ];
-        $mediaID = media_save($file, $id, true, auth_quickaclcheck($id), 'rename');
+        $mediaID = media_save($file, $id, false, auth_quickaclcheck($id), 'rename');
         if (!is_string($mediaID)) {
             list($textstatus, $code) = $mediaID;
-            return ['status' => 400, 'status_text' => $textstatus];
+            return ['status' => 409, 'status_text' => $textstatus];
         }
 
         // report status?
