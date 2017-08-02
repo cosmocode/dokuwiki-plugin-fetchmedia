@@ -74,13 +74,28 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
             case 'downloadExternalFile':
                 $page = $INPUT->str('page');
                 $link = $INPUT->str('link');
-                return $this->downloadExternalFile($page, $link);
+                return $this->lockAndDownload($page, $link);
             default:
                 throw new Exception('FIXME invalid action');
         }
     }
 
-    public function downloadExternalFile($page, $link) {
+    protected function lockAndDownload($pageId, $link) {
+        $lock = checklock($pageId);
+        if ($lock !== false) {
+            return ['status' => 409, 'status_text' => sprintf($this->getLang('error: page is locked'), $lock)];
+        }
+        lock($pageId);
+        try {
+            $results = $this->downloadExternalFile($pageId, $link);
+        } catch (Exception $e) {
+            return ['status' => 500, 'status_text' => hsc($e->getMessage())];
+        }
+        unlock($pageId);
+        return $results;
+    }
+
+    protected function downloadExternalFile($page, $link) {
         // check that link is on page
 
         $fn = $this->constructFileName($link);

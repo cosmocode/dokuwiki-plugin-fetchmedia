@@ -20,6 +20,7 @@ $lang['title: namespace input hint'] = 'Valid namespaces can consist of lowercas
 $lang['error: windows share missing'] = 'Windows share doesn\'t exist';
 $lang['error: failed to open stream'] = 'Failed to open stream';
 $lang['error: failed to download file'] = 'Failed to download file';
+$lang['error: page is locked'] = 'Page is locked by %s';
 
 $lang['js']['table-heading: page'] = 'Page 📄';
 $lang['js']['table-heading: links'] = 'Links 🔗';
