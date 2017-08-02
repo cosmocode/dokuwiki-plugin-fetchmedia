@@ -1,6 +1,6 @@
 Download all externally linked mediafiles in the given namespace and its subnamespaces.
 
-You can choose whether to download
-  * all media files
-  * or only windows share links (e.g. ''%%[[\\server\share\file.pdf]]%%'')
-  * or only files linked as a commen external file (e.g. ''%%{{https://www.example.com/file.pdf}}%%'')
+If your DokuWiki runs on a Windows-Server, you can choose whether to download
+  * only files linked as a commen external file (e.g. ''%%{{https://www.example.com/file.pdf}}%%'')
+  * only windows share links (e.g. ''%%[[\\server\share\file.pdf]]%%'')
+  * or both common external media files and windows share links

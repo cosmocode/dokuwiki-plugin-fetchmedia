@@ -35,12 +35,18 @@ class admin_plugin_fetchmedia extends DokuWiki_Admin_Plugin {
             'autofocus' => 'autofocus,'
         ]);
         $form->addHTML('<br />');
-        $form->addRadioButton('mediatypes', $this->getLang('label: all media'))->val('all')->attr('required', 'required');
-        $form->addRadioButton('mediatypes', $this->getLang('label: windows shares'))->val('windows-shares')->attrs([
-            'required' => 'required',
-            'checked' => 'checked',
-        ]);
-        $form->addRadioButton('mediatypes', $this->getLang('label: common media only'))->val('common')->attr('required', 'required');
+        $radioCommon = $form->addRadioButton('mediatypes', $this->getLang('label: common media only'))->val('common')->attr('required', 'required');
+        $radioWin = $form->addRadioButton('mediatypes', $this->getLang('label: windows shares'))->val('windows-shares')->attr('required', 'required');
+        $radioAll = $form->addRadioButton('mediatypes', $this->getLang('label: all media'))->val('all')->attr('required', 'required');
+
+        if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+            $radioAll->attr('disabled', 'disabled');
+            $radioWin->attr('disabled', 'disabled');
+            $radioCommon->attr('checked', 'checked');
+        } else {
+            $radioWin->attr('checked', 'checked');
+        }
+
         $form->addButton('submit', $this->getLang('label: button download'));
         $form->addFieldsetClose();
 

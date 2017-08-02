@@ -1,0 +1,7 @@
+Hier können extern verlinkte Mediendateien in den Sub-Namensraum der entsprechenden Seite heruntergeladen werden.
+Es werden rekursiv alle Seiten im angegebenen Namensraum und darunter durchsucht.
+
+Falls DokuWiki auf einem Windows-Server läuft, kann aus folgendem gewählt werden:
+  * nur gewöhnlich eingebundene Mediendateien herunterladen (z.B. ''%%{{https://www.example.com/file.pdf}}%%'')
+  * nur Windows-File-Shares (z.B. ''%%[[\\server\share\file.pdf]]%%'') herunterladen
+  * oder sowohl gewöhnlich eingebundene Mediendateien als auch Windows-File-Shares herunterladen
