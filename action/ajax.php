@@ -74,17 +74,32 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
             case 'downloadExternalFile':
                 $page = $INPUT->str('page');
                 $link = $INPUT->str('link');
-                return $this->downloadExternalFile($page, $link);
+                return $this->lockAndDownload($page, $link);
             default:
                 throw new Exception('FIXME invalid action');
         }
     }
 
-    public function downloadExternalFile($page, $link) {
+    protected function lockAndDownload($pageId, $link) {
+        $lock = checklock($pageId);
+        if ($lock !== false) {
+            return ['status' => 409, 'status_text' => sprintf($this->getLang('error: page is locked'), $lock)];
+        }
+        lock($pageId);
+        try {
+            $results = $this->downloadExternalFile($pageId, $link);
+        } catch (Exception $e) {
+            return ['status' => 500, 'status_text' => hsc($e->getMessage())];
+        }
+        unlock($pageId);
+        return $results;
+    }
+
+    protected function downloadExternalFile($pageId, $link) {
         // check that link is on page
 
         $fn = $this->constructFileName($link);
-        $id = getNS(cleanID($page)) . ':' . $fn;
+        $id = getNS(cleanID($pageId)) . ':' . $fn;
 
         // check if file exists
         if (filter_var($link, FILTER_VALIDATE_URL)) {
@@ -99,9 +114,15 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
             if ($code >= 400) {
                 return ['status' => $code, 'status_text' => $textstatus];
             }
-        } else if (!file_exists($link)) {
+        } else {
             // windows share
-            return ['status' => 404, 'status_text' => $this->getLang('error: windows share missing')];
+            if (!file_exists($link)) {
+                return ['status' => 404, 'status_text' => $this->getLang('error: windows share missing')];
+            }
+
+            if (is_dir($link)) {
+                return ['status' => 422, 'status_text' => $this->getLang('error: windows share is directory')];
+            }
         }
 
         // download file
@@ -138,12 +159,15 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
         // report status?
 
         // replace link
-        $text = rawWiki($page);
+        $text = rawWiki($pageId);
         $newText = $this->replaceLinkInText($text, $link, $mediaID);
 
         // create new page revision
         if ($text !== $newText) {
-            saveWikiText($page, $newText, 'File ' . hsc($link) . ' downloaded by fetchmedia plugin');
+            if (filemtime(wikiFN($pageId)) == time()) {
+                $this->waitForTick(true);
+            }
+            saveWikiText($pageId, $newText, 'File ' . hsc($link) . ' downloaded by fetchmedia plugin');
         }
 
         // report ok
@@ -259,5 +283,29 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
         $windosFNstart = strrpos($link, '\\') + 1;
         $fnStart = max($urlFNstart, $windosFNstart);
         return substr($link, $fnStart);
+    }
+
+    /**
+     * Waits until a new second has passed
+     *
+     * The very first call will return immeadiately, proceeding calls will return
+     * only after at least 1 second after the last call has passed.
+     *
+     * When passing $init=true it will not return immeadiately but use the current
+     * second as initialization. It might still return faster than a second.
+     *
+     * This is a duplicate of the code in @see \DokuWikiTest::waitForTick
+     *
+     * @param bool $init wait from now on, not from last time
+     * @return int new timestamp
+     */
+    protected function waitForTick($init = false) {
+        static $last = 0;
+        if($init) $last = time();
+        while($last === $now = time()) {
+            usleep(100000); //recheck in a 10th of a second
+        }
+        $last = $now;
+        return $now;
     }
 }
