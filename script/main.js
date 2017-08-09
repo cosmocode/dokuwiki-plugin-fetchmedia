@@ -65,13 +65,17 @@ form.addEventListener('submit',
             headers: new Headers({ 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' }),
             credentials: 'include',
         };
+        document.getElementById('fetchmedia_results').innerHTML = '';
         fetch(`${DOKU_BASE}lib/exe/ajax.php?${query}`, options)
             .then(response => response.json())
             .then((data) => {
+                const TIMEOUT_TO_SHOW_WORK = 200;
                 const links = Object.entries(data);
                 if (!links.length) {
                     const noLinksMsg = window.LANG.plugins.fetchmedia['error: no links found'];
-                    document.getElementById('fetchmedia_results').innerHTML = `<div id="noLinksFound"><p><em>${noLinksMsg}</em></p></div>`;
+                    setTimeout(() => {
+                        document.getElementById('fetchmedia_results').innerHTML = `<div id="noLinksFound"><p><em>${noLinksMsg}</em></p></div>`;
+                    }, TIMEOUT_TO_SHOW_WORK);
                     return;
                 }
                 const l10nTableHeadingPage = window.LANG.plugins.fetchmedia['table-heading: page'];
@@ -90,10 +94,12 @@ form.addEventListener('submit',
                 });
                 // todo handle case that there are no external links
                 const table = `${tableHead + tableRows.join('')}</table>`;
-                document.getElementById('fetchmedia_results').innerHTML = table;
 
-                const linkGen = flattenLinks(data);
-                requestDownloadExternalFile(linkGen);
+                setTimeout(() => {
+                    document.getElementById('fetchmedia_results').innerHTML = table;
+                    const linkGen = flattenLinks(data);
+                    requestDownloadExternalFile(linkGen);
+                }, TIMEOUT_TO_SHOW_WORK);
             });
     },
 );
