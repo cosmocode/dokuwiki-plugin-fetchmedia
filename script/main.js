@@ -9,14 +9,14 @@ function* flattenLinks(data) {
 }
 
 function decorateLiWithResult(page, link, res) {
-    const selector = `li[data-id="${btoa(page + link)}"] div.li`;
-    const li = document.querySelector(selector);
+    const selector = `td[data-id="${btoa(page + link)}"]`;
+    const td = document.querySelector(selector);
     const STATUS_OK = 200;
 
     if (res.status === STATUS_OK) {
-        li.innerHTML += '<span class="result success"> OK ✔️</span>';
+        td.innerHTML = '<span class="result success"> OK ⬇✔️</span>';
     } else {
-        li.innerHTML += `<span class="result error"> ${res.status}: ${res.statusText} ❌</span>`;
+        td.innerHTML = `<span class="result error"> ${res.status}: ${res.statusText} ❌</span>`;
     }
 }
 
@@ -75,14 +75,17 @@ form.addEventListener('submit',
                 }
                 const l10nTableHeadingPage = window.LANG.plugins.fetchmedia['table-heading: page'];
                 const l10nTableHeadingLinks = window.LANG.plugins.fetchmedia['table-heading: links'];
-                const tableHead = `<table class="inline"><thead><tr><th>${l10nTableHeadingPage}</th><th>${l10nTableHeadingLinks}</th></tr></thead>`;
+                const tableHead = `<table class="inline"><thead><tr><th>${l10nTableHeadingPage}</th><th>${l10nTableHeadingLinks}</th><th></th></tr></thead>`;
                 const tableRows = links.map(([page, mediaLinks]) => {
                     const pageUrl = `${DOKU_BASE}doku.php?id=${page}`;
                     const pageLink = `<a href="${pageUrl}" class="wikilink1">${page}</a>`;
+                    const numberOfLinks = mediaLinks.length;
+                    const firstUrl = mediaLinks[0];
+                    const remainingLinks = mediaLinks.slice(1);
                     return `<tr>
-                        <td><span class="wikipage">${pageLink}</span></td>
-                        <td><ul>${mediaLinks.map(url => `<li data-id="${btoa(page + url)}"><div class="li"><span class="mediaLink">${url}</span></div></li>`).join('')}</ul></td>
-                    </tr>`;
+                        <td rowspan="${numberOfLinks}"><span class="wikipage">${pageLink}</span></td>
+                        <td><span class="mediaLink">${firstUrl}</span></td><td data-id="${btoa(page + firstUrl)}" class="result"></td></tr>
+                        ${remainingLinks.map(url => `<tr><td><span class="mediaLink">${url}</span></td><td data-id="${btoa(page + url)}" class="result"></td></tr>`).join('')}`;
                 });
                 // todo handle case that there are no external links
                 const table = `${tableHead + tableRows.join('')}</table>`;
