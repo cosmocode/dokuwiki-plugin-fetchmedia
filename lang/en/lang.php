@@ -13,7 +13,7 @@ $lang['label: namespace input'] = 'Namespace to download';
 $lang['label: all media'] = 'Both types of media';
 $lang['label: windows shares'] = 'Only Windows-File-Shares';
 $lang['label: common media only'] = 'Only common media files';
-$lang['label: button download'] = 'Download Now';
+$lang['label: button search'] = 'Search for external media files';
 
 $lang['title: namespace input hint'] = 'Valid namespaces can consist of lowercase letters, numbers and the _ and : characters';
 
@@ -25,7 +25,9 @@ $lang['error: windows share is directory'] = 'Link goes to a directory instead o
 
 $lang['js']['table-heading: page'] = 'Page 📄';
 $lang['js']['table-heading: links'] = 'Links 🔗';
+$lang['js']['table-heading: results'] = 'Results';
 $lang['js']['error: no links found'] = 'No links found in the given namespace.';
+$lang['js']['label: button download'] = 'Download Now';
 
 
 //Setup VIM: ex: et ts=4 :

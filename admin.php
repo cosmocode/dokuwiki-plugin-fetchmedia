@@ -47,7 +47,7 @@ class admin_plugin_fetchmedia extends DokuWiki_Admin_Plugin {
             $radioWin->attr('checked', 'checked');
         }
 
-        $form->addButton('submit', $this->getLang('label: button download'));
+        $form->addButton('submit', $this->getLang('label: button search'));
         $form->addFieldsetClose();
 
         $doc .= '<div id="plugin_fetchmedia_page">';
