@@ -94,11 +94,12 @@ form.addEventListener('submit',
                 });
                 // todo handle case that there are no external links
                 const table = `${tableHead + tableRows.join('')}</table>`;
+                const downloadButton = `<button id="downloadNow">${window.LANG.plugins.fetchmedia['label: button download']}</button>`;
 
                 setTimeout(() => {
-                    document.getElementById('fetchmedia_results').innerHTML = table;
+                    document.getElementById('fetchmedia_results').innerHTML = downloadButton + table;
                     const linkGen = flattenLinks(data);
-                    requestDownloadExternalFile(linkGen);
+                    document.getElementById('downloadNow').addEventListener('click', () => requestDownloadExternalFile(linkGen));
                 }, TIMEOUT_TO_SHOW_WORK);
             });
     },
