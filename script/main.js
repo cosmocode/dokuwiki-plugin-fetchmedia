@@ -84,9 +84,9 @@ form.addEventListener('submit',
                     const firstUrl = mediaLinks[0];
                     const remainingLinks = mediaLinks.slice(1);
                     return `<tr>
-                        <td rowspan="${numberOfLinks}"><span class="wikipage">${pageLink}</span></td>
-                        <td><span class="mediaLink">${firstUrl}</span></td><td data-id="${btoa(page + firstUrl)}" class="result"></td></tr>
-                        ${remainingLinks.map(url => `<tr><td><span class="mediaLink">${url}</span></td><td data-id="${btoa(page + url)}" class="result"></td></tr>`).join('')}`;
+                        <td class="wikipage" rowspan="${numberOfLinks}">${pageLink}</td>
+                        <td class="mediaLink">${firstUrl}</td><td data-id="${btoa(page + firstUrl)}" class="result"></td></tr>
+                        ${remainingLinks.map(url => `<tr><td class="mediaLink">${url}</td><td data-id="${btoa(page + url)}" class="result"></td></tr>`).join('')}`;
                 });
                 // todo handle case that there are no external links
                 const table = `${tableHead + tableRows.join('')}</table>`;
