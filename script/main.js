@@ -80,7 +80,8 @@ form.addEventListener('submit',
                 }
                 const l10nTableHeadingPage = window.LANG.plugins.fetchmedia['table-heading: page'];
                 const l10nTableHeadingLinks = window.LANG.plugins.fetchmedia['table-heading: links'];
-                const tableHead = `<table class="inline"><thead><tr><th>${l10nTableHeadingPage}</th><th>${l10nTableHeadingLinks}</th><th></th></tr></thead>`;
+                const l10nTableHeadingResults = window.LANG.plugins.fetchmedia['table-heading: results'];
+                const tableHead = `<table class="inline"><thead><tr><th>${l10nTableHeadingPage}</th><th>${l10nTableHeadingLinks}</th><th>${l10nTableHeadingResults}</th></tr></thead>`;
                 const tableRows = links.map(([page, mediaLinks]) => {
                     const pageUrl = `${DOKU_BASE}doku.php?id=${page}`;
                     const pageLink = `<a href="${pageUrl}" class="wikilink1">${page}</a>`;
