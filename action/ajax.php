@@ -58,8 +58,7 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
         }
 
         if (is_array($result) && isset($result['status'])) {
-            http_status($result['status'], $result['status_text']);
-            $result = isset($result['body']) ? $result['body'] : '';
+            http_status($result['status']);
         }
         echo json_encode($result);
     }
@@ -109,7 +108,6 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
                 return strpos($elem, ':') === false;
             });
             $finalStatus = end($statusHeaders);
-            dbglog($finalStatus, __FILE__ . ': ' . __LINE__);
             list($protocoll, $code, $textstatus) = explode(' ', $finalStatus, 3);
             if ($code >= 400) {
                 return ['status' => $code, 'status_text' => $textstatus];
@@ -153,7 +151,7 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
         $mediaID = media_save($file, $id, false, auth_quickaclcheck($id), 'rename');
         if (!is_string($mediaID)) {
             list($textstatus, $code) = $mediaID;
-            return ['status' => 409, 'status_text' => $textstatus];
+            return ['status' => 400, 'status_text' => $textstatus];
         }
 
         // report status?

@@ -16,7 +16,7 @@ function decorateLiWithResult(page, link, res) {
     if (res.status === STATUS_OK) {
         td.innerHTML = '<span class="result success"> OK ⬇✔️</span>';
     } else {
-        td.innerHTML = `<span class="result error"> ${res.status}: ${res.statusText} ❌</span>`;
+        td.innerHTML = `<span class="result error"> ${res.status}: ${res.status_text} ❌</span>`;
     }
 }
 
@@ -39,6 +39,7 @@ function requestDownloadExternalFile(linkGen) {
     };
 
     fetch(`${DOKU_BASE}lib/exe/ajax.php`, options)
+        .then(response => response.json())
         .then((res) => {
             decorateLiWithResult(page, link, res);
             requestDownloadExternalFile(linkGen);
