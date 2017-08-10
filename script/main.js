@@ -27,6 +27,10 @@ function requestDownloadExternalFile(linkGen) {
     }
 
     const [page, link] = value;
+    const selector = `td[data-id="${btoa(page + link)}"]`;
+    const td = document.querySelector(selector);
+    td.innerHTML = '<span class="⏳⬇">⬇️</span>';
+
     const options = {
         method: 'POST',
         headers: new Headers({ 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' }),
