@@ -69,7 +69,8 @@ form.addEventListener('submit',
             headers: new Headers({ 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' }),
             credentials: 'include',
         };
-        document.getElementById('fetchmedia_results').innerHTML = '';
+        const waitingMessage = window.LANG.plugins.fetchmedia['message: waiting for response'];
+        document.getElementById('fetchmedia_results').innerHTML = `<div id="waitingMessage"><p><em>${waitingMessage}</em></p></div>`;
         fetch(`${DOKU_BASE}lib/exe/ajax.php?${query}`, options)
             .then(response => response.json())
             .then((data) => {
@@ -106,6 +107,11 @@ form.addEventListener('submit',
                     const linkGen = flattenLinks(data);
                     document.getElementById('downloadNow').addEventListener('click', () => requestDownloadExternalFile(linkGen));
                 }, TIMEOUT_TO_SHOW_WORK);
+            })
+            .catch((error) => {
+                console.error(error);
+                const fetchError = window.LANG.plugins.fetchmedia['error: error retrieving links'];
+                document.getElementById('fetchmedia_results').innerHTML = `<div id="error"><p><em>${fetchError}</em></p></div>`;
             });
     },
 );

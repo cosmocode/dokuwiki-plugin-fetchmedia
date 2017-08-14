@@ -27,7 +27,9 @@ $lang['js']['table-heading: page'] = 'Seite 📄';
 $lang['js']['table-heading: links'] = 'Links 🔗';
 $lang['js']['table-heading: results'] = 'Ergbnisse';
 $lang['js']['error: no links found'] = 'Im angegebenen Namensraum wurden keine externen Links gefunden.';
+$lang['js']['error: error retrieving links'] = 'Beim Suchen der Medienlinks ist ein Fehler aufgetreten.';
 $lang['js']['label: button download'] = 'Jetzt herunterladen';
+$lang['js']['message: waiting for response'] = 'Wartet auf Antwort...';
 
 
 //Setup VIM: ex: et ts=4 :

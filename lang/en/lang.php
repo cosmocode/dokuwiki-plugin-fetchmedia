@@ -27,7 +27,9 @@ $lang['js']['table-heading: page'] = 'Page 📄';
 $lang['js']['table-heading: links'] = 'Links 🔗';
 $lang['js']['table-heading: results'] = 'Results';
 $lang['js']['error: no links found'] = 'No links found in the given namespace.';
+$lang['js']['error: error retrieving links'] = 'An error occured while retrieving the media links.';
 $lang['js']['label: button download'] = 'Download Now';
+$lang['js']['message: waiting for response'] = 'Waiting for a response...';
 
 
 //Setup VIM: ex: et ts=4 :
