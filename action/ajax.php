@@ -244,7 +244,8 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
                     $mediaLinks[$pagename][] = $mediaLinkInstruction[1][0];
                 }
             }
-            $mediaLinks[$pagename] = array_unique($mediaLinks[$pagename]);
+            $mediaLinks[$pagename] = array_unique($mediaLinks[$pagename]); // ensure we have no duplicates
+            $mediaLinks[$pagename] = array_values($mediaLinks[$pagename]); // ensure that the array is correctly numbered 0,1,2,...
         }
 
         $mediaLinks = array_filter($mediaLinks);
