@@ -121,6 +121,10 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
             if (is_dir($link)) {
                 return ['status' => 422, 'status_text' => $this->getLang('error: windows share is directory')];
             }
+
+            if (!is_readable($link)) {
+                return ['status' => 403, 'status_text' => $this->getLang('error: windows share not readable')];
+            }
         }
 
         // download file
