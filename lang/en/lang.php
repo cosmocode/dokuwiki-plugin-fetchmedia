@@ -17,7 +17,8 @@ $lang['label: button search'] = 'Search for external media files';
 
 $lang['title: namespace input hint'] = 'Valid namespaces can consist of lowercase letters, numbers and the _ and : characters';
 
-$lang['error: windows share missing'] = 'Windows share doesn\'t exist';
+$lang['error: windows share missing'] = 'Windows share doesn\'t exist or the server hasn\'t sufficient access rights for it';
+$lang['error: windows share not readable'] = 'Windows share is not readable.';
 $lang['error: failed to open stream'] = 'Failed to open stream';
 $lang['error: failed to download file'] = 'Failed to download file';
 $lang['error: page is locked'] = 'Page is locked by %s';
