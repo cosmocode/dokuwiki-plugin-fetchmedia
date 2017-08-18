@@ -15,7 +15,7 @@ $lang['label: windows shares'] = 'Only Windows-File-Shares';
 $lang['label: common media only'] = 'Only common media files';
 $lang['label: button search'] = 'Search for external media files';
 
-$lang['title: namespace input hint'] = 'Valid namespaces can consist of lowercase letters, numbers and the _ and : characters';
+$lang['title: namespace input hint'] = 'Valid namespaces can consist of lowercase letters, numbers and the "_", "-" and ":" characters';
 
 $lang['error: windows share missing'] = 'Windows share doesn\'t exist or the server hasn\'t sufficient access rights for it';
 $lang['error: windows share not readable'] = 'Windows share is not readable.';
