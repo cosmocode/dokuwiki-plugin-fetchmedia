@@ -173,7 +173,7 @@ class action_plugin_fetchmedia_ajax extends DokuWiki_Action_Plugin {
         }
 
         // report ok
-        return $mediaID;
+        return ['status' => 200, 'status_text' => $mediaID];
     }
 
     /**
