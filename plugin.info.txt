@@ -1,7 +1,7 @@
 base   fetchmedia
 author Michael Große
 email  dokuwiki@cosmocode.de
-date   2017-09-04
+date   2017-09-06
 name   fetchmedia plugin
 desc   Download linked external media to wiki namespaces
 url    https://dokuwiki.org/plugin:fetchmedia
