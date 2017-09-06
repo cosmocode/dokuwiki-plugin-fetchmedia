@@ -28,7 +28,7 @@ class admin_plugin_fetchmedia extends DokuWiki_Admin_Plugin {
         $form->addFieldsetOpen();
         $form->addTextInput('namespace', $this->getLang('label: namespace input'))->attrs([
             'inputmode' => 'verbatim',
-            'pattern' => '[a-z0-9_:/;\.]+',
+            'pattern' => '[-a-z0-9_:/;\.]+',
             'placeholder' => 'name:space',
             'title' => $this->getLang('title: namespace input hint'),
             'required' => 'required',

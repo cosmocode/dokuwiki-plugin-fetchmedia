@@ -8,14 +8,13 @@
 // menu entry for admin plugins
 $lang['menu'] = 'Externe Mediendateien herunterladen';
 
-
 $lang['label: namespace input'] = 'Namensraum';
 $lang['label: all media'] = 'Beide Arten von externen Medienlinks';
 $lang['label: windows shares'] = 'Nur Windows-File-Shares';
 $lang['label: common media only'] = 'Nur gewöhnlich eingebundene Mediendateien';
 $lang['label: button search'] = 'externe Medienlinks suchen';
 
-$lang['title: namespace input hint'] = 'Ein Namensraum kann aus a-z, Zahlen und _ und : bestehen';
+$lang['title: namespace input hint'] = 'Ein Namensraum kann aus a-z, Zahlen und "_","-" und ":" bestehen';
 
 $lang['error: windows share missing'] = 'Windows-File-Share existiert nicht oder der Server hat nicht die notwendigen Zugriffsrechte für diese Datei';
 $lang['error: windows share not readable'] = 'Windows-File-Share kann nicht gelesen werden.';

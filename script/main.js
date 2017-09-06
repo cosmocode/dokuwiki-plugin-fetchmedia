@@ -89,7 +89,7 @@ form.addEventListener('submit',
                 const tableHead = `<table class="inline"><thead><tr><th>${l10nTableHeadingPage}</th><th>${l10nTableHeadingLinks}</th><th>${l10nTableHeadingResults}</th></tr></thead>`;
                 const tableRows = links.map(([page, mediaLinks]) => {
                     const pageUrl = `${DOKU_BASE}doku.php?id=${page}`;
-                    const pageLink = `<a href="${pageUrl}" class="wikilink1">${page}</a>`;
+                    const pageLink = `<a href="${pageUrl}" class="wikilink1" target="_blank">${page}</a>`;
                     const numberOfLinks = mediaLinks.length;
                     const firstUrl = mediaLinks[0];
                     const remainingLinks = mediaLinks.slice(1);
